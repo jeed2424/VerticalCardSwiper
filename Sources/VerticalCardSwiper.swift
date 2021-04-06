@@ -123,6 +123,7 @@ public class VerticalCardSwiper: UIView {
     /// We use this tapGestureRecognizer for the tap recognizer.
     fileprivate var tapGestureRecognizer: UITapGestureRecognizer!
     /// We use this tapGestureRecognizer for the tap recognizer.
+    fileprivate var DoubleTapGestureRecognizer: UITapGestureRecognizer!
     fileprivate var longPressGestureRecognizer: UILongPressGestureRecognizer!
     /// We use this horizontalPangestureRecognizer for the vertical panning.
     fileprivate var horizontalPangestureRecognizer: UIPanGestureRecognizer!
@@ -283,6 +284,14 @@ extension VerticalCardSwiper: UIGestureRecognizerDelegate {
         tapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(handleTap))
         tapGestureRecognizer.delegate = self
         verticalCardSwiperView.addGestureRecognizer(tapGestureRecognizer)
+        
+        DoubleTapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(handleDoubleTap))
+//        doubleTap.delaysTouchesBegan = true
+//        doubleTap.delaysTouchesEnded = true
+        DoubleTapGestureRecognizer.numberOfTapsRequired = 2
+        DoubleTapGestureRecognizer.delegate = self
+        verticalCardSwiperView.addGestureRecognizer(DoubleTapGestureRecognizer)
+        tapGestureRecognizer.require(toFail: DoubleTapGestureRecognizer)
 
         longPressGestureRecognizer = UILongPressGestureRecognizer.init(target: self, action: #selector(handleHold))
         longPressGestureRecognizer.delegate = self
@@ -305,6 +314,19 @@ extension VerticalCardSwiper: UIGestureRecognizerDelegate {
 
                 if let tappedCardIndex = verticalCardSwiperView.indexPathForItem(at: locationInCollectionView) {
                     wasTapped(verticalCardSwiperView, tappedCardIndex.row)
+                }
+            }
+        }
+    }
+    
+    @objc fileprivate func handleDoubleTap(sender: UITapGestureRecognizer) {
+        if let delegate = delegate {
+            if let wasDoubleTapped = delegate.didDoubleTapCard {
+                /// The taplocation relative to the collectionView.
+                let locationInCollectionView = sender.location(in: verticalCardSwiperView)
+
+                if let tappedCardIndex = verticalCardSwiperView.indexPathForItem(at: locationInCollectionView) {
+                    wasDoubleTapped(verticalCardSwiperView, tappedCardIndex.row)
                 }
             }
         }

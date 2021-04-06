@@ -66,6 +66,8 @@ import UIKit
      - parameter index: The index of the CardCell that was tapped.
      */
     @objc optional func didTapCard(verticalCardSwiperView: VerticalCardSwiperView, index: Int)
+    
+    @objc optional func didDoubleTapCard(verticalCardSwiperView: VerticalCardSwiperView, index: Int)
 
     /**
      Tells the delegate when the user holds a card.
